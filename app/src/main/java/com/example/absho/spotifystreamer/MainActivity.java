@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity {
             doMySearch(myQuery);
         }
         else {
-            Log.v("MainActivity.Search", "NOOOO");
+            Log.v("MainActivity.Search", "Action is no ACTION_SEARCH");
         }
 
         setContentView(R.layout.activity_main);

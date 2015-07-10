@@ -1,5 +1,6 @@
 package com.example.absho.spotifystreamer;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -34,8 +36,9 @@ public class MainActivityFragment extends Fragment {
     public MainActivityFragment() {
     }
 
+    private final static String EXTRA_ARTIST_ID = "com.example.absho.spotifystreamer.ARTIST_ID";
+
     private SpotifyListAdapter spotifyAdapter;
-    private ImageView image;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,6 +52,16 @@ public class MainActivityFragment extends Fragment {
         spotifyAdapter = new SpotifyListAdapter(getActivity(), new ArrayList<String>());
         ListView listView = (ListView) rootView.findViewById(R.id.listview_spotify);
         listView.setAdapter(spotifyAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String artistId = spotifyAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), TopTracksActivity.class);
+
+                intent.putExtra(EXTRA_ARTIST_ID, artistId);
+                startActivity(intent);
+            }
+        });
 
         MainActivity activity = (MainActivity) getActivity();
         String artistName = activity.getQuery();
@@ -73,7 +86,10 @@ public class MainActivityFragment extends Fragment {
                 ArtistsPager artistlist = spotify.searchArtists(params[0]);
 
                 Log.v(LOG_TAG, Integer.toString(artistlist.artists.total));
+
+                spotifyAdapter.clear();
                 String[][] artistArray = new String[artistlist.artists.total][2];
+
                 for (int i = 0; i < artistlist.artists.total; i++) {
                     Artist item = artistlist.artists.items.get(i);
                     artistArray[i][0] = item.name;
@@ -86,14 +102,6 @@ public class MainActivityFragment extends Fragment {
 
                     spotifyAdapter.add(item.id, artistArray[i][0], artistArray[i][1]);
                     Log.v(LOG_TAG, item.name);
-
-                    //Look for top tracks
-                    Map <String, Object> hm = new HashMap<String, Object>();
-                    hm.put("country", "US");
-                    Tracks tracks = spotify.getArtistTopTrack(item.id, hm);
-                    for (int j = 0; j < tracks.tracks.size() && j < 10; j++) {
-                        Log.v(LOG_TAG + " track", tracks.tracks.get(j).name);
-                    }
                 }
 
                 return true;

@@ -42,7 +42,7 @@ public class SpotifyListAdapter extends ArrayAdapter<String> {
 
     @Override
     public String getItem(int position) {
-        return artistNames.get(position);
+        return artistIds.get(position);
     }
 
     @Override
@@ -59,10 +59,11 @@ public class SpotifyListAdapter extends ArrayAdapter<String> {
 
         ImageView imageView = (ImageView) rowView.findViewById(R.id.list_singer_item_imageView);
 
-        txtTitle.setText(artistNames.get(position));
-        txtTitle.setTag(artistIds.get(position));
+        rowView.setTag(artistIds.get(position));
 
-        Log.v(LOG_TAG, txtTitle.getTag().toString() + " ## " + artistNames.get(position) + " # " + imageUrls.get(position));
+        txtTitle.setText(artistNames.get(position));
+
+        Log.v(LOG_TAG, rowView.getTag().toString() + " ## " + artistNames.get(position) + " # " + imageUrls.get(position));
 
         if (imageUrls.get(position) != "") {
             Picasso.with(context).load(imageUrls.get(position)).into(imageView);
@@ -85,6 +86,7 @@ public class SpotifyListAdapter extends ArrayAdapter<String> {
     public void clear() {
         artistNames.clear();
         imageUrls.clear();
+        artistIds.clear();
     }
 }
 
