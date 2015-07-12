@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,7 @@ public class MainActivityFragment extends Fragment {
     private final static String EXTRA_ARTIST_ID = "com.example.absho.spotifystreamer.ARTIST_ID";
 
     private SpotifyListAdapter spotifyAdapter;
+    private Toast toast;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,11 +57,23 @@ public class MainActivityFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String artistId = spotifyAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), TopTracksActivity.class);
+                if (view.getTag() != null) {
+                    String artistId = spotifyAdapter.getItem(position);
+                    Intent intent = new Intent(getActivity(), TopTracksActivity.class);
 
-                intent.putExtra(EXTRA_ARTIST_ID, artistId);
-                startActivity(intent);
+                    intent.putExtra(EXTRA_ARTIST_ID, artistId);
+                    startActivity(intent);
+                }
+                else {
+                    String msg = "No Tracks are available";
+
+                    if (toast != null) {
+                        toast.cancel();
+                    }
+
+                    toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
         });
 
@@ -100,7 +114,17 @@ public class MainActivityFragment extends Fragment {
                         artistArray[i][1] = "";
                     }
 
-                    spotifyAdapter.add(item.id, artistArray[i][0], artistArray[i][1]);
+                    //Look for top tracks
+                    Map<String, Object> hm = new HashMap<String, Object>();
+                    hm.put("country", "US");
+                    Tracks tracks = spotify.getArtistTopTrack(item.id, hm);
+
+                    if (tracks.tracks.size() != 0) {
+                        spotifyAdapter.add(item.id, artistArray[i][0], artistArray[i][1], true);
+                    }
+                    else {
+                        spotifyAdapter.add(item.id, artistArray[i][0], artistArray[i][1], false);
+                    }
                     Log.v(LOG_TAG, item.name);
                 }
 

@@ -31,7 +31,7 @@
             android:minHeight="?android:attr/listPreferredItemHeight"
             android:gravity="center_vertical"
             android:id="@+id/list_album_item_textView" />
-        
+
     </LinearLayout>
 
 </LinearLayout>

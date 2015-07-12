@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,12 +66,26 @@ public class TopTracksActivity extends ActionBarActivity {
         return true;
     }
 
+
+    @Override
+    public void onBackPressed() {
+        Log.v(LOG_TAG_PARENT, "onBackPressed finish() is called!");
+        finish();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        // Up/Home is pressed
+        if (id == android.R.id.home) {
+            Log.v(LOG_TAG_PARENT, "Up/Home is pressed");
+            finish();
+            return true;
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -112,7 +127,7 @@ public class TopTracksActivity extends ActionBarActivity {
                         tracksArray[i][1] = "";
                     }
 
-                    spotifyAdapter.add(item.id, tracksArray[i][0], tracksArray[i][1]);
+                    spotifyAdapter.add(item.id, tracksArray[i][0], tracksArray[i][1], false);
                 }
 
                 return true;
